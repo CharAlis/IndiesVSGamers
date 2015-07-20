@@ -31,12 +31,14 @@ public class Weapon : Item {
 	public int firerate     {get; set;} // -1 for 0.5 seconds delay , 0 for semiautomatic , 1 for automatic , 2 for rapid fire , 3 for continuous  // NOTE: Can be used: For negative numbers delay 0.5*FR for positive numbers FR bullets per second
 	public bool spread      {get; set;}
 	public bool penetration {get; set;}
+    public int clipsize { get; set; }
 
-	public Weapon(int ID, string name , char type, int range ,int firerate, bool spread, bool penetration) : base(ID,name,type) {
+	public Weapon(int ID, string name , char type, int range ,int firerate, bool spread, bool penetration, int clipsize) : base(ID,name,type) {
 		this.range    = range;
 		this.firerate = firerate;
 		this.spread   = spread;
 		this.penetration = penetration;
+        this.clipsize = clipsize;
 	}
 
 };

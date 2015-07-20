@@ -4,6 +4,8 @@ using System;
 
 public class WeaponScript : MonoBehaviour {
 
+    public GameObject grenade;
+
 	private Weapon me;
 
 	private Transform barrel;
@@ -11,8 +13,10 @@ public class WeaponScript : MonoBehaviour {
 	private GameObject bullet;
 	private GameObject rocket;
 	private Animator animator;
-	public GameObject grenade;
+	
 	private GameObject semiautobullet;
+    private int shotsFired;
+    private GameObject primaryGun;
 
 	void Awake() {
 		foreach ( Item item in ItemManager.Instance.items ) {
@@ -30,21 +34,27 @@ public class WeaponScript : MonoBehaviour {
 		//{
 		//	if (t.name == "Grenade") grenade = t.gameObject;
 		//}
-			foreach (Transform child in GameObject.FindWithTag("Player").transform)
-			{
-				if (child.name == "bullet")
-					bullet = child.gameObject;
-				else if (child.name == "rocket")
-					rocket = child.gameObject;
-				else if (child.name == "semiautobullet")
-					semiautobullet = child.gameObject;
-			}
+		foreach (Transform child in GameObject.FindWithTag("Player").transform)
+		{
+			if (child.name == "bullet")
+				bullet = child.gameObject;
+			else if (child.name == "rocket")
+				rocket = child.gameObject;
+			else if (child.name == "semiautobullet")
+				semiautobullet = child.gameObject;
+            else if (child.name == "Gun")
+                primaryGun = child.gameObject;
+		}
 	}
 
 	void Start() {
-		StartCoroutine(ShootChecking());
 		animator = barrel.GetComponent<Animator>();
 	}
+
+    void OnEnable() {
+        shotsFired = 0;
+        StartCoroutine(ShootChecking());
+    }
 
 	IEnumerator ShootChecking() {
 		while(true) {
@@ -91,8 +101,12 @@ public class WeaponScript : MonoBehaviour {
 					GameObject b = Instantiate(rocket, barrel.transform.position, transform.rotation * Quaternion.Euler(0,0,(i == 0)?(0):((i==1)?(25):(-25))) ) as GameObject;
 					b.SetActive(true);
 					b.GetComponent<RocketScript>().range = me.range;
+                    shotsFired++;
 					yield return null;
-				} while (hittarget && me.penetration ); 
+				} while (hittarget && me.penetration );
+                if (shotsFired >= me.clipsize && me.clipsize > 0) {
+                    ItemManager.Instance.ActivateItem(primaryGun);
+                }
 				yield return null;
 			}
 			yield return null;
@@ -112,12 +126,15 @@ public class WeaponScript : MonoBehaviour {
 							hittarget = true;
 						}
 					}
+                    shotsFired++;
 					yield return null;
-
 				} while (hittarget && me.penetration );
 				GameObject sab = Instantiate(semiautobullet, barrel.transform.position, transform.rotation * Quaternion.Euler(0, 0, (i == 0) ? (0) : ((i == 1) ? (25) : (-25)))) as GameObject;
 				sab.SetActive(true);
 				sab.GetComponent<BulletScript>().range = me.range;
+                if (shotsFired >= me.clipsize && me.clipsize > 0) {
+                    ItemManager.Instance.ActivateItem(primaryGun);
+                }
 				yield return null;
 			}
 			yield return null;
@@ -132,9 +149,13 @@ public class WeaponScript : MonoBehaviour {
 					GameObject b = Instantiate(bullet, barrel.transform.position, transform.rotation * Quaternion.Euler(0,0,(i == 0)?(0):((i==1)?(25):(-25))) ) as GameObject;
 					b.SetActive(true);
 					b.GetComponent<BulletScript>().range = me.range;
+                    shotsFired++;
 					yield return null;
 				} while (hittarget && me.penetration ); 
 				animator.SetBool("shooting", false);
+                if (shotsFired >= me.clipsize && me.clipsize > 0) {
+                    ItemManager.Instance.ActivateItem(primaryGun);
+                }
 				yield return null;
 			}
 			yield return null;
@@ -148,9 +169,13 @@ public class WeaponScript : MonoBehaviour {
 					GameObject b = Instantiate(bullet, barrel.transform.position, transform.rotation * Quaternion.Euler(0,0,(i == 0)?(0):((i==1)?(25):(-25))) ) as GameObject;
 					b.SetActive(true);
 					b.GetComponent<BulletScript>().range = me.range;
+                    shotsFired++;
 					yield return null;
 				} while (hittarget && me.penetration );
 				animator.SetBool("shooting", false);
+                if (shotsFired >= me.clipsize && me.clipsize > 0) {
+                    ItemManager.Instance.ActivateItem(primaryGun);
+                }
 				yield return null;
 			}
 			yield return null;
@@ -170,10 +195,13 @@ public class WeaponScript : MonoBehaviour {
 						}
 						if (hit.collider.tag == "Crate") hit.collider.transform.SendMessage("DropItem");
 					}
+                    shotsFired++;
 					yield return null;
-					
 				} while (hittarget && me.penetration );
 				animator.SetBool("shooting", false);
+                if (shotsFired >= me.clipsize && me.clipsize > 0) {
+                    ItemManager.Instance.ActivateItem(primaryGun);
+                }
 				yield return null;
 			}
 			break;
