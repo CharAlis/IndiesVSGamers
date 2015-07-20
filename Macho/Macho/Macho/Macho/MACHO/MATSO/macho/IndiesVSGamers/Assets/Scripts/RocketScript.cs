@@ -7,10 +7,12 @@ public class RocketScript : MonoBehaviour {
 	public int range = 0;
 	private Animator animator;
 	private Transform player;
+    private AudioSource source;
 	
 	void Awake() {
 		player = GameObject.FindWithTag("Player").transform;
 		animator = GetComponent<Animator>();
+        source = GetComponent<AudioSource>();
 	}
 	
 	void Update () {
@@ -24,6 +26,7 @@ public class RocketScript : MonoBehaviour {
 		if (col.tag == "Player") return;
 		if (col.tag == "Enemy" || col.tag == "Ground" || col.tag == "Crate")
 		{
+            source.Play();
 			animator.SetTrigger("Kaboom");
 			speed = -MovingPlatform.Instance.speed;
 			Collider2D[] cols = Physics2D.OverlapCircleAll(transform.position, 3.0f);

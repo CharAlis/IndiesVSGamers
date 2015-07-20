@@ -45,10 +45,8 @@ public class WeaponScript : MonoBehaviour {
             else if (child.name == "Gun")
                 primaryGun = child.gameObject;
 		}
-	}
 
-	void Start() {
-		animator = barrel.GetComponent<Animator>();
+        animator = barrel.GetComponent<Animator>();
 	}
 
     void OnEnable() {
@@ -102,6 +100,7 @@ public class WeaponScript : MonoBehaviour {
 					b.SetActive(true);
 					b.GetComponent<RocketScript>().range = me.range;
                     shotsFired++;
+                    Sounds.Instance.RocketLaucnher();
 					yield return null;
 				} while (hittarget && me.penetration );
                 if (shotsFired >= me.clipsize && me.clipsize > 0) {
@@ -127,7 +126,14 @@ public class WeaponScript : MonoBehaviour {
 						}
 					}
                     shotsFired++;
-					yield return null;
+                    if (me.name == "Gun") {
+                        Sounds.Instance.Gun();
+                    } else if (me.name == "Shotgun") {
+                        Sounds.Instance.Shotgun();
+                    } else if (me.name == "Magnum") {
+                        Sounds.Instance.Magnum();
+                    }
+                    yield return null;
 				} while (hittarget && me.penetration );
 				GameObject sab = Instantiate(semiautobullet, barrel.transform.position, transform.rotation * Quaternion.Euler(0, 0, (i == 0) ? (0) : ((i == 1) ? (25) : (-25)))) as GameObject;
 				sab.SetActive(true);
@@ -143,7 +149,8 @@ public class WeaponScript : MonoBehaviour {
 		case 1:
 			for (int i = 0; i < Convert.ToInt32(me.spread)*2 + 1; ++i) { 
 				bool hittarget;
-				do {  
+				do {
+                    if (me.name == "AK47") Sounds.Instance.PlayAK47();
 					hittarget = false;
 					animator.SetBool("shooting", true);
 					GameObject b = Instantiate(bullet, barrel.transform.position, transform.rotation * Quaternion.Euler(0,0,(i == 0)?(0):((i==1)?(25):(-25))) ) as GameObject;
@@ -151,7 +158,8 @@ public class WeaponScript : MonoBehaviour {
 					b.GetComponent<BulletScript>().range = me.range;
                     shotsFired++;
 					yield return null;
-				} while (hittarget && me.penetration ); 
+				} while (hittarget && me.penetration );
+                if (me.name == "AK47") Sounds.Instance.StopAK47();
 				animator.SetBool("shooting", false);
                 if (shotsFired >= me.clipsize && me.clipsize > 0) {
                     ItemManager.Instance.ActivateItem(primaryGun);
@@ -163,7 +171,8 @@ public class WeaponScript : MonoBehaviour {
 		case 2:
 			for (int i = 0; i < Convert.ToInt32(me.spread)*2 + 1; ++i) { 
 				bool hittarget;
-				do {  
+				do {
+                    if (me.name == "Minigun") Sounds.Instance.PlayMinigun();
 					hittarget = false;
 					animator.SetBool("shooting", true);
 					GameObject b = Instantiate(bullet, barrel.transform.position, transform.rotation * Quaternion.Euler(0,0,(i == 0)?(0):((i==1)?(25):(-25))) ) as GameObject;
@@ -172,6 +181,7 @@ public class WeaponScript : MonoBehaviour {
                     shotsFired++;
 					yield return null;
 				} while (hittarget && me.penetration );
+                if (me.name == "Minigun") Sounds.Instance.StopMinigun();
 				animator.SetBool("shooting", false);
                 if (shotsFired >= me.clipsize && me.clipsize > 0) {
                     ItemManager.Instance.ActivateItem(primaryGun);
@@ -183,7 +193,8 @@ public class WeaponScript : MonoBehaviour {
 		case 3:
 			for (int i = 0; i < Convert.ToInt32(me.spread)*2 + 1; ++i) { 
 				bool hittarget;
-				do {  
+				do {
+                    if (me.name == "Lase") Sounds.Instance.PlayLaser();
 					hittarget = false;
 					animator.SetBool("shooting", true);
 					RaycastHit2D hit = Physics2D.Raycast(barrel.position, transform.rotation *  shotAngles[i]  , (float)((me.range==0)?(5):((me.range==1)?(7):(15))));
@@ -198,6 +209,7 @@ public class WeaponScript : MonoBehaviour {
                     shotsFired++;
 					yield return null;
 				} while (hittarget && me.penetration );
+                if (me.name == "Laser") Sounds.Instance.StopLaser();
 				animator.SetBool("shooting", false);
                 if (shotsFired >= me.clipsize && me.clipsize > 0) {
                     ItemManager.Instance.ActivateItem(primaryGun);

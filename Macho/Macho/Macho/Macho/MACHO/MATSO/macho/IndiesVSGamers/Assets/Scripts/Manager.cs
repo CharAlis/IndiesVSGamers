@@ -12,6 +12,8 @@ public class Manager : MonoBehaviour {
 	private GameObject razorimages;
 	private Image[] imgs;
 	private Text score;
+    public AudioClip[] clips;
+    private AudioSource source;
 
 	void Awake()
 	{
@@ -25,6 +27,7 @@ public class Manager : MonoBehaviour {
 			++i;
 		}
 		score = GameObject.Find("Score").GetComponent<Text>();
+        source = GetComponent<AudioSource>();
 	}
 
 	// Use this for initialization
@@ -86,6 +89,9 @@ public class Manager : MonoBehaviour {
 
 	public void GameOver()
 	{
+        source.clip = clips[0];
+        source.loop = false;
+        source.Play();
 		PauseGame.Instance.GameOver();
 	}
 

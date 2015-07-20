@@ -7,9 +7,12 @@ public class GrenadeScript : MonoBehaviour
 	private Vector2 grenadeOrigin;
 	private Animator animator;
 	private Rigidbody2D rb;
+    private AudioSource source;
+
 	void Awake()
 	{
 		animator = GetComponent<Animator>();
+        source = GetComponent<AudioSource>();
 	}
 
 	void Start()
@@ -25,6 +28,7 @@ public class GrenadeScript : MonoBehaviour
 			Collider2D[] cols = Physics2D.OverlapCircleAll(transform.position, radius);
 			foreach (Collider2D c in cols)
 			{
+                source.Play();
 				animator.SetTrigger("Kaboom");
 				rb.velocity = Vector3.zero;
 				rb.isKinematic = true;
